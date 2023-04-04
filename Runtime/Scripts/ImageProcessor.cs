@@ -26,9 +26,10 @@ namespace DeepLearningImageProcessor
 
         // If you want to set default assets from your project, use the GUID of the asset
         // You can find the GUID in the .meta file of the asset (open it with a text editor)
-        private const string ProcessingComputeShaderGUID = "0685d34a035b4cefa942d94390282c12";
+        private const string ProcessingComputeShaderGUID = "2c418cec15ae44419d94328d0e8dcea8";
         private const string NormalizeMaterialGUID = "98c21923ad2f420496e34b649c6cad3e";
         private const string CropMaterialGUID = "d6db137a4c2b476cbe1ddc99af13beb7";
+        private const string NormStatsJsonGUID = "9c8f1a57cb884c9b8a4439cae327a2f8";
 
         [System.Serializable]
         private class NormStats
@@ -69,6 +70,11 @@ namespace DeepLearningImageProcessor
         if (cropMaterial == null)
         {
             cropMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(UnityEditor.AssetDatabase.GUIDToAssetPath(CropMaterialGUID));
+        }
+
+        if (normStatsJson == null)
+        {
+            normStatsJson = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormStatsJsonGUID));
         }
 #endif
         }
