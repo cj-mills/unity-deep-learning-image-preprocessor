@@ -1,0 +1,24 @@
+{
+    "name": "com.cj-mills.deep-learning-image-preprocessor",
+    "displayName": "Deep Learning Image Preprocessor",
+    "version": "1.0.0",
+    "unity": "2020.3",
+    "description": "A custom Unity package for preparing image input to perform inference with deep learning models. Includes shaders and compute shaders for various image processing tasks, such as cropping, normalizing, and flipping images.",
+    "keywords": [
+        "image",
+        "preprocessing",
+        "deep learning",
+        "shaders",
+        "compute shaders"
+    ],
+    "author": {
+        "name": "Christian Mills",
+        "email": "christian@christianjmills.com",
+        "url": "https://christianjmills.com/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cj-mills/deep-learning-image-preprocessor.git"
+    },
+    "license": "MIT"
+}
