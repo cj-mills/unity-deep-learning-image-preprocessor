@@ -1,14 +1,7 @@
 {
   "name": "DeepLearningImagePreprocessor",
   "references": [],
-  "includePlatforms": [
-    "Editor",
-    "Windows",
-    "Mac",
-    "Linux",
-    "iOS",
-    "Android"
-  ],
+  "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,
