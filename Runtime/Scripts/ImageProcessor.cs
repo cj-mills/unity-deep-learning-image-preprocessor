@@ -74,7 +74,7 @@ namespace DeepLearningImageProcessor
 
         if (normStatsJson == null)
         {
-            normStatsJson = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormStatsJsonGUID));
+            normStatsJson = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormStatsJsonGUID));
         }
 #endif
         }
