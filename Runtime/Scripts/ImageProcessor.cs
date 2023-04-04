@@ -15,10 +15,10 @@ namespace DeepLearningImageProcessor
         [Header("Processing Shaders")]
         [Tooltip("The compute shader for image processing")]
         [SerializeField] private ComputeShader processingComputeShader;
-        [Tooltip("The material for image normalization")]
-        [SerializeField] private Material normalizeMaterial;
-        [Tooltip("The material for image cropping")]
-        [SerializeField] private Material cropMaterial;
+        [Tooltip("The shader for image normalization")]
+        [SerializeField] private Shader normalizeShader;
+        [Tooltip("The shader for image cropping")]
+        [SerializeField] private Shader cropShader;
 
         [Header("Normalization Parameters")]
         [Tooltip("JSON file with the mean and std values for normalization")]
@@ -27,9 +27,14 @@ namespace DeepLearningImageProcessor
         // If you want to set default assets from your project, use the GUID of the asset
         // You can find the GUID in the .meta file of the asset (open it with a text editor)
         private const string ProcessingComputeShaderGUID = "2c418cec15ae44419d94328d0e8dcea8";
-        private const string NormalizeMaterialGUID = "98c21923ad2f420496e34b649c6cad3e";
-        private const string CropMaterialGUID = "d6db137a4c2b476cbe1ddc99af13beb7";
+        private const string NormalizeShaderGUID = "45d8405a4cc64ecfa477b712e0465c05";
+        private const string CropShaderGUID = "0685d34a035b4cefa942d94390282c12";
         private const string NormStatsJsonGUID = "9c8f1a57cb884c9b8a4439cae327a2f8";
+
+        // The material for image normalization
+        private Material normalizeMaterial;
+        // The material for image cropping
+        private Material cropMaterial;
 
         [System.Serializable]
         private class NormStats
@@ -62,14 +67,14 @@ namespace DeepLearningImageProcessor
             processingComputeShader = UnityEditor.AssetDatabase.LoadAssetAtPath<ComputeShader>(UnityEditor.AssetDatabase.GUIDToAssetPath(ProcessingComputeShaderGUID));
         }
 
-        if (normalizeMaterial == null)
+        if (normalizeShader == null)
         {
-            normalizeMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormalizeMaterialGUID));
+            normalizeShader = UnityEditor.AssetDatabase.LoadAssetAtPath<Shader>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormalizeShaderGUID));
         }
 
-        if (cropMaterial == null)
+        if (cropShader == null)
         {
-            cropMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(UnityEditor.AssetDatabase.GUIDToAssetPath(CropMaterialGUID));
+            cropShader = UnityEditor.AssetDatabase.LoadAssetAtPath<Shader>(UnityEditor.AssetDatabase.GUIDToAssetPath(CropShaderGUID));
         }
 
         if (normStatsJson == null)
@@ -84,6 +89,9 @@ namespace DeepLearningImageProcessor
         /// </summary>
         private void Start()
         {
+            normalizeMaterial = new Material(normalizeShader);
+            cropMaterial = new Material(cropShader);
+
             LoadNormStats();
             InitializeProcessingShaders();
         }
