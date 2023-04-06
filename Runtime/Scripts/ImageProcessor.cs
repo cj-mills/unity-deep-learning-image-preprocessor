@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace DeepLearningImageProcessor
+namespace CJM.DeepLearningImageProcessor
 {
     /// <summary>
     /// The ImageProcessor class processes images using compute shaders or materials,
