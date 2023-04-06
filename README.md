@@ -30,7 +30,7 @@ For Unity versions older than 2021.1, add the Git URL to the `manifest.json` fil
 ```json
 {
   "dependencies": {
-    "com.cj-mills.unity-deep-learning-image-preprocessor": "https://github.com/cj-mills/unity-deep-learning-image-preprocessor.git",
+    "com.cj-mills.deep-learning-image-preprocessor": "https://github.com/cj-mills/unity-deep-learning-image-preprocessor.git",
     // other dependencies...
   }
 }
