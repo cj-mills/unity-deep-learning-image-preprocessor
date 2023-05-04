@@ -1,8 +1,8 @@
 Shader "Deep Learning Image Preprocessor/CropImage" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
-        _Offset ("Offset", Vector) = (0, 0)
-        _Size ("Size", Vector) = (0, 0)
+        _Offset ("Offset", Vector) = (0, 0, 0, 0)
+        _Size ("Size", Vector) = (0, 0, 0, 0)
     }
     
     SubShader {
