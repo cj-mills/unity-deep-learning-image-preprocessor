@@ -63,10 +63,10 @@ namespace CJM.DeepLearningImageProcessor
         {
             // Load default assets only in the Unity Editor, not in a build
 #if UNITY_EDITOR
-            processingComputeShader = LoadDefaultAsset<ComputeShader>(ref processingComputeShader, ProcessingComputeShaderGUID);
-            normalizeShader = LoadDefaultAsset<Shader>(ref normalizeShader, NormalizeShaderGUID);
-            cropShader = LoadDefaultAsset<Shader>(ref cropShader, CropShaderGUID);
-            normStatsJson = LoadDefaultAsset<TextAsset>(ref normStatsJson, NormStatsJsonGUID);
+            processingComputeShader = LoadDefaultAsset<ComputeShader>(ProcessingComputeShaderGUID);
+            normalizeShader = LoadDefaultAsset<Shader>(NormalizeShaderGUID);
+            cropShader = LoadDefaultAsset<Shader>(CropShaderGUID);
+            normStatsJson = LoadDefaultAsset<TextAsset>(NormStatsJsonGUID);
 #endif
         }
 
@@ -80,17 +80,16 @@ namespace CJM.DeepLearningImageProcessor
         /// <remarks>
         /// This method is only executed in the Unity Editor, not in builds.
         /// </remarks>
-        private void LoadDefaultAsset<T>(ref T asset, string guid) where T : UnityEngine.Object
+        private T LoadDefaultAsset<T>(string guid) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
-            // Check if the asset field is null
-            if (asset == null)
-            {
-                // Load the asset from the AssetDatabase using its GUID
-                asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
-            }
+            // Load the asset from the AssetDatabase using its GUID
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
+#else
+            return null;
 #endif
         }
+
 
 
 
