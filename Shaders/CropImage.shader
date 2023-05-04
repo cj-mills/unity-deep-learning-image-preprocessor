@@ -23,11 +23,13 @@ Shader "Deep Learning Image Preprocessor/CropImage" {
             float2 _Offset;
             float2 _Size;
 
+            // Contains the vertex position and texture coordinates
             struct appdata {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
+            // Contains the transformed vertex position and texture coordinates
             struct v2f {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
@@ -35,7 +37,9 @@ Shader "Deep Learning Image Preprocessor/CropImage" {
 
             v2f vert (appdata v) {
                 v2f o;
+                // Transform the input vertex position to clip space
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                // Copy the input texture coordinates to the output structure
                 o.uv = v.uv;
                 return o;
             }
