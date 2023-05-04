@@ -14,7 +14,13 @@ RWStructuredBuffer<float> _Mean;
 // Structured buffer to hold the standard deviation values for each color channel (r, g, b)
 RWStructuredBuffer<float> _Std;
 
+// Float variable that represents the scaling factor to apply to the normalized pixel values
 float _Scale;
+
+// The (x, y) coordinates of the top-left corner of the cropping region
+int2 _CropOffset;
+// The size (width, height) of the cropping region
+int2 _CropSize;
 
 // Normalize the input image
 [numthreads(8, 8, 1)]
@@ -31,10 +37,6 @@ void NormalizeImage(uint3 id : SV_DispatchThreadID)
     // Apply scaling and leave the alpha channel unchanged
     _OutputImage[id.xy] = float4(normalizedPixel.rgb * _Scale, inputPixel.a);
 }
-
-
-int2 _CropOffset;
-int2 _CropSize;
 
 // Crop the input image
 [numthreads(8, 8, 1)]
