@@ -71,11 +71,11 @@ namespace CJM.DeepLearningImageProcessor
         }
 
         /// <summary>
-        /// Loads the default asset for the specified field using its GUID.
+        /// Loads the default asset for the specified type using its GUID.
         /// </summary>
         /// <typeparam name="T">The type of asset to be loaded.</typeparam>
-        /// <param name="asset">A reference to the asset field to be assigned.</param>
         /// <param name="guid">The GUID of the default asset.</param>
+        /// <returns>The loaded asset of the specified type.</returns>
         /// <remarks>
         /// This method is only executed in the Unity Editor, not in builds.
         /// </remarks>
