@@ -21,6 +21,12 @@ Deep Learning Image Preprocessor is a custom Unity package designed for preparin
 
 
 
+## Code Walkthrough
+
+* [Code Walkthrough: Unity Deep Learning Image Preprocessor Package](https://christianjmills.com/posts/unity-deep-learning-image-preprocessor-walkthrough/)
+
+
+
 ## Getting Started
 
 ### Prerequisites
