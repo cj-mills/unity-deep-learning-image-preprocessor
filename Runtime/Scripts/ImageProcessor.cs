@@ -55,33 +55,44 @@ namespace CJM.DeepLearningImageProcessor
         // Buffer for standard deviation values used in compute shader
         private ComputeBuffer stdBuffer;
 
-
+        /// <summary>
+        /// Reset is called when the user hits the Reset button in the Inspector's context menu
+        /// or when adding the component the first time. This function is only called in editor mode.
+        /// </summary>
         private void Reset()
         {
-            // Use the AssetDatabase to find the asset by its GUID and set the default values
-            // This will only work in the Unity Editor, not in a build
+            // Load default assets only in the Unity Editor, not in a build
 #if UNITY_EDITOR
-        if (processingComputeShader == null)
-        {
-            processingComputeShader = UnityEditor.AssetDatabase.LoadAssetAtPath<ComputeShader>(UnityEditor.AssetDatabase.GUIDToAssetPath(ProcessingComputeShaderGUID));
-        }
-
-        if (normalizeShader == null)
-        {
-            normalizeShader = UnityEditor.AssetDatabase.LoadAssetAtPath<Shader>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormalizeShaderGUID));
-        }
-
-        if (cropShader == null)
-        {
-            cropShader = UnityEditor.AssetDatabase.LoadAssetAtPath<Shader>(UnityEditor.AssetDatabase.GUIDToAssetPath(CropShaderGUID));
-        }
-
-        if (normStatsJson == null)
-        {
-            normStatsJson = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(UnityEditor.AssetDatabase.GUIDToAssetPath(NormStatsJsonGUID));
-        }
+            processingComputeShader = LoadDefaultAsset<ComputeShader>(ProcessingComputeShaderGUID, processingComputeShader);
+            normalizeShader = LoadDefaultAsset<Shader>(NormalizeShaderGUID, normalizeShader);
+            cropShader = LoadDefaultAsset<Shader>(CropShaderGUID, cropShader);
+            normStatsJson = LoadDefaultAsset<TextAsset>(NormStatsJsonGUID, normStatsJson);
 #endif
         }
+
+
+        /// <summary>
+        /// Loads the default asset for the specified field using its GUID.
+        /// </summary>
+        /// <typeparam name="T">The type of asset to be loaded.</typeparam>
+        /// <param name="asset">A reference to the asset field to be assigned.</param>
+        /// <param name="guid">The GUID of the default asset.</param>
+        /// <remarks>
+        /// This method is only executed in the Unity Editor, not in builds.
+        /// </remarks>
+        private void LoadDefaultAsset<T>(ref T asset, string guid) where T : UnityEngine.Object
+        {
+#if UNITY_EDITOR
+            // Check if the asset field is null
+            if (asset == null)
+            {
+                // Load the asset from the AssetDatabase using its GUID
+                asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
+            }
+#endif
+        }
+
+
 
         /// <summary>
         /// Called when the script is initialized.
@@ -149,6 +160,7 @@ namespace CJM.DeepLearningImageProcessor
 
             mean = normStats.mean;
             std = normStats.std;
+            // Disable scaling if no scale value is provided
             scale = normStats.scale == 0f ? 1f : normStats.scale;
         }
 
@@ -196,10 +208,14 @@ namespace CJM.DeepLearningImageProcessor
         public void ProcessImageComputeShader(RenderTexture image, string functionName)
         {
             int kernelHandle = processingComputeShader.FindKernel(functionName);
+            // Create a temporary render texture
             RenderTexture result = GetTemporaryRenderTexture(image);
 
+            // Bind the source and destination textures to the compute shader
             BindTextures(kernelHandle, image, result);
+            // Dispatche the shader
             DispatchShader(kernelHandle, result);
+            // Blit the processed image back to the original image
             Graphics.Blit(result, image);
 
             RenderTexture.ReleaseTemporary(result);
@@ -211,10 +227,12 @@ namespace CJM.DeepLearningImageProcessor
         /// <param name="image">The image to be processed.</param>
         public void ProcessImageShader(RenderTexture image)
         {
+            // Create a temporary render texture
             RenderTexture result = GetTemporaryRenderTexture(image, false);
-
             RenderTexture.active = result;
+            // Apply the normalization material to the input image
             Graphics.Blit(image, result, normalizeMaterial);
+            // Copy the result back to the original image
             Graphics.Blit(result, image);
 
             RenderTexture.ReleaseTemporary(result);
@@ -228,7 +246,9 @@ namespace CJM.DeepLearningImageProcessor
         /// <returns>A temporary render texture.</returns>
         private RenderTexture GetTemporaryRenderTexture(RenderTexture image, bool enableRandomWrite = true)
         {
+            // Create a temporary render texture
             RenderTexture result = RenderTexture.GetTemporary(image.width, image.height, 24, RenderTextureFormat.ARGBHalf);
+            // Set random write access
             result.enableRandomWrite = enableRandomWrite;
             result.Create();
             return result;
@@ -253,8 +273,10 @@ namespace CJM.DeepLearningImageProcessor
         /// <param name="result">The result render texture.</param>
         private void DispatchShader(int kernelHandle, RenderTexture result)
         {
+            // Calculate the thread groups in the X and Y dimensions
             int threadGroupsX = Mathf.CeilToInt((float)result.width / 8);
             int threadGroupsY = Mathf.CeilToInt((float)result.height / 8);
+            // Execute the compute shader
             processingComputeShader.Dispatch(kernelHandle, threadGroupsX, threadGroupsY, 1);
         }
 
@@ -271,30 +293,53 @@ namespace CJM.DeepLearningImageProcessor
         }
 
 
+        /// <summary>
+        /// Crops an image using a compute shader with the given offset and size.
+        /// </summary>
+        /// <param name="image">The original image to be cropped.</param>
+        /// <param name="croppedImage">The cropped output image.</param>
+        /// <param name="offset">The offset for the crop area in the original image.</param>
+        /// <param name="size">The size of the crop area.</param>
         public void CropImageComputeShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
         {
             int kernelHandle = processingComputeShader.FindKernel("CropImage");
             RenderTexture result = GetTemporaryRenderTexture(croppedImage);
 
+            // Bind the source and destination textures to the compute shader
             BindTextures(kernelHandle, image, result);
+            // Set the offset and size parameters
             processingComputeShader.SetInts("_CropOffset", new int[] { offset.x, offset.y });
             processingComputeShader.SetInts("_CropSize", new int[] { size.x, size.y });
+            // Execute the compute shader
             DispatchShader(kernelHandle, result);
+            // Copy the result to the cropped image texture
             Graphics.Blit(result, croppedImage);
 
             RenderTexture.ReleaseTemporary(result);
         }
 
 
+        /// <summary>
+        /// Crops an image using a shader with the given offset and size.
+        /// </summary>
+        /// <param name="image">The original image to be cropped.</param>
+        /// <param name="croppedImage">The cropped output image.</param>
+        /// <param name="offset">The offset for the crop area in the original image (float array with two elements).</param>
+        /// <param name="size">The size of the crop area (float array with two elements).</param>
+
         public void CropImageShader(RenderTexture image, RenderTexture croppedImage, float[] offset, float[] size)
         {
+            // Set the offset and size parameters on the crop material
             cropMaterial.SetVector("_Offset", new Vector4(offset[0], offset[1], 0, 0));
             cropMaterial.SetVector("_Size", new Vector4(size[0], size[1], 0, 0));
 
+            // Create a temporary render texture
             RenderTexture result = GetTemporaryRenderTexture(croppedImage, false);
-
             RenderTexture.active = result;
+
+            // Apply the crop material to the input image
             Graphics.Blit(image, result, cropMaterial);
+            // Copy the result to the cropped image texture
             Graphics.Blit(result, croppedImage);
 
             RenderTexture.ReleaseTemporary(result);
