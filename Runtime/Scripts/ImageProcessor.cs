@@ -286,7 +286,7 @@ namespace CJM.DeepLearningImageProcessor
             RenderTexture.ReleaseTemporary(result);
         }
 
-        public void CropImageShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
+        public void CropImageShader(RenderTexture image, RenderTexture croppedImage, float[] offset, float[] size)
         {
             cropMaterial.SetVector("_Offset", new Vector2(offset[0], offset[1]));
             cropMaterial.SetVector("_Size", new Vector2(size[0], size[1]));
