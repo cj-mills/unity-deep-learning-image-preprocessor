@@ -272,19 +272,19 @@ namespace CJM.DeepLearningImageProcessor
         }
 
 
-        // public void CropImageComputeShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
-        // {
-        //     int kernelHandle = processingComputeShader.FindKernel("Crop");
-        //     RenderTexture result = GetTemporaryRenderTexture(croppedImage);
+        public void CropImageComputeShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
+        {
+            int kernelHandle = processingComputeShader.FindKernel("Crop");
+            RenderTexture result = GetTemporaryRenderTexture(croppedImage);
 
-        //     BindTextures(kernelHandle, image, result);
-        //     processingComputeShader.SetInts("_Offset", new int[] { offset.x, offset.y });
-        //     processingComputeShader.SetInts("_Size", new int[] { size.x, size.y });
-        //     DispatchShader(kernelHandle, result);
-        //     Graphics.Blit(result, croppedImage);
+            BindTextures(kernelHandle, image, result);
+            processingComputeShader.SetInts("_Offset", new int[] { offset.x, offset.y });
+            processingComputeShader.SetInts("_Size", new int[] { size.x, size.y });
+            DispatchShader(kernelHandle, result);
+            Graphics.Blit(result, croppedImage);
 
-        //     RenderTexture.ReleaseTemporary(result);
-        // }
+            RenderTexture.ReleaseTemporary(result);
+        }
 
         public void CropImageShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
         {
@@ -301,19 +301,19 @@ namespace CJM.DeepLearningImageProcessor
         }
 
 
-        public void CropImageShader(RenderTexture image, RenderTexture croppedImage, float[] offset, float[] size)
-        {
-            cropMaterial.SetVector("_Offset", new Vector4(offset[0], offset[1], 0, 0));
-            cropMaterial.SetVector("_Size", new Vector4(size[0], size[1], 0, 0));
+        // public void CropImageShader(RenderTexture image, RenderTexture croppedImage, float[] offset, float[] size)
+        // {
+        //     cropMaterial.SetVector("_Offset", new Vector4(offset[0], offset[1], 0, 0));
+        //     cropMaterial.SetVector("_Size", new Vector4(size[0], size[1], 0, 0));
 
-            RenderTexture result = GetTemporaryRenderTexture(croppedImage, false);
+        //     RenderTexture result = GetTemporaryRenderTexture(croppedImage, false);
 
-            RenderTexture.active = result;
-            Graphics.Blit(image, result, cropMaterial);
-            Graphics.Blit(result, croppedImage);
+        //     RenderTexture.active = result;
+        //     Graphics.Blit(image, result, cropMaterial);
+        //     Graphics.Blit(result, croppedImage);
 
-            RenderTexture.ReleaseTemporary(result);
-        }
+        //     RenderTexture.ReleaseTemporary(result);
+        // }
 
 
         /// <summary>
