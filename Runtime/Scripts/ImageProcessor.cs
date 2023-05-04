@@ -272,19 +272,34 @@ namespace CJM.DeepLearningImageProcessor
         }
 
 
-        public void CropImageComputeShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
-        {
-            int kernelHandle = processingComputeShader.FindKernel("Crop");
-            RenderTexture result = GetTemporaryRenderTexture(croppedImage);
+        // public void CropImageComputeShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
+        // {
+        //     int kernelHandle = processingComputeShader.FindKernel("Crop");
+        //     RenderTexture result = GetTemporaryRenderTexture(croppedImage);
 
-            BindTextures(kernelHandle, image, result);
-            processingComputeShader.SetInts("_Offset", new int[] { offset.x, offset.y });
-            processingComputeShader.SetInts("_Size", new int[] { size.x, size.y });
-            DispatchShader(kernelHandle, result);
+        //     BindTextures(kernelHandle, image, result);
+        //     processingComputeShader.SetInts("_Offset", new int[] { offset.x, offset.y });
+        //     processingComputeShader.SetInts("_Size", new int[] { size.x, size.y });
+        //     DispatchShader(kernelHandle, result);
+        //     Graphics.Blit(result, croppedImage);
+
+        //     RenderTexture.ReleaseTemporary(result);
+        // }
+
+        public void CropImageShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
+        {
+            cropMaterial.SetVector("_Offset", offset.Vector2);
+            cropMaterial.SetVector("_Size", size.Vector2);
+
+            RenderTexture result = GetTemporaryRenderTexture(croppedImage, false);
+
+            RenderTexture.active = result;
+            Graphics.Blit(image, result, cropMaterial);
             Graphics.Blit(result, croppedImage);
 
             RenderTexture.ReleaseTemporary(result);
         }
+
 
         public void CropImageShader(RenderTexture image, RenderTexture croppedImage, float[] offset, float[] size)
         {
