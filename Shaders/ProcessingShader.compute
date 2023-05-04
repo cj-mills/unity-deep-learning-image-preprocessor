@@ -1,12 +1,12 @@
 #pragma kernel NormalizeImage
-#pragma kernel Crop
+#pragma kernel CropImage
 #pragma kernel FlipXAxis
 
 // Input image texture
 Texture2D<float4> _InputImage;
 
 // Output image texture
-RWTexture2D<float4> _Result;
+RWTexture2D<float4> _OutputImage;
 
 // Structured buffer to hold the mean values for each color channel (r, g, b)
 RWStructuredBuffer<float> _Mean;
@@ -16,52 +16,40 @@ RWStructuredBuffer<float> _Std;
 
 float _Scale;
 
-// The compute shader kernel
+// Normalize the input image
 [numthreads(8, 8, 1)]
 void NormalizeImage(uint3 id : SV_DispatchThreadID)
 {
-    // Normalize the color values for each channel (r, g, b)
-    _Result[id.xy] = float4(
-        // Normalize the red channel
-        ((_InputImage[id.xy].r - _Mean[0]) / _Std[0])*_Scale,
-        // Normalize the green channel
-        ((_InputImage[id.xy].g - _Mean[1]) / _Std[1])*_Scale,
-        // Normalize the blue channel
-        ((_InputImage[id.xy].b - _Mean[2]) / _Std[2])*_Scale,
-        // Leave the alpha channel unchanged
-        _InputImage[id.xy].a);
+    float4 inputPixel = _InputImage[id.xy];
+    float4 normalizedPixel = (inputPixel - _Mean) / _Std;
+
+    // Apply scaling and leave the alpha channel unchanged
+    _OutputImage[id.xy] = float4(normalizedPixel.rgb * _Scale, inputPixel.a);
 }
 
+int2 _CropOffset;
+int2 _CropSize;
 
-int2 _Offset;
-int2 _Size;
-
+// Crop the input image
 [numthreads(8, 8, 1)]
-void Crop(uint3 id : SV_DispatchThreadID)
+void CropImage(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < (uint)_Size.x && id.y < (uint)_Size.y)
+    if (id.x < (uint)_CropSize.x && id.y < (uint)_CropSize.y)
     {
-        int2 inputPos = id.xy + _Offset;
-        _Result[id.xy] = _InputImage[inputPos];
+        int2 inputPos = id.xy + _CropOffset;
+        _OutputImage[id.xy] = _InputImage[inputPos];
     }
 }
 
-
-// Flip the image around the x-axis
+// Flip the input image around the x-axis
 [numthreads(8, 8, 1)]
 void FlipXAxis(uint3 id : SV_DispatchThreadID)
 {
-    // Stores the InputImage width
     uint width;
-    // Stores the InputImage height
     uint height;
-    // Get the dimensions of the InputImage
     _InputImage.GetDimensions(width, height);
 
-    // Update the y value for the pixel coordinates
-    int2 coords = int2(id.x, height - id.y);
-    _Result[id.xy] = float4(_InputImage[coords].r, 
-        _InputImage[coords].g, 
-        _InputImage[coords].b, 
-        _InputImage[coords].a);
+    // Compute the flipped pixel coordinates
+    int2 flippedCoords = int2(id.x, height - id.y - 1);
+    _OutputImage[id.xy] = _InputImage[flippedCoords];
 }
