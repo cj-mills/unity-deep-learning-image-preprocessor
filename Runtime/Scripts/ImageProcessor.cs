@@ -243,7 +243,7 @@ namespace CJM.DeepLearningImageProcessor
         /// <param name="destination">The destination texture for the processed result.</param>
         private void BindTextures(int kernelHandle, RenderTexture source, RenderTexture destination)
         {
-            processingComputeShader.SetTexture(kernelHandle, "_Result", destination);
+            processingComputeShader.SetTexture(kernelHandle, "_OutputImage", destination);
             processingComputeShader.SetTexture(kernelHandle, "_InputImage", source);
         }
 
@@ -274,7 +274,7 @@ namespace CJM.DeepLearningImageProcessor
 
         public void CropImageComputeShader(RenderTexture image, RenderTexture croppedImage, Vector2Int offset, Vector2Int size)
         {
-            int kernelHandle = processingComputeShader.FindKernel("Crop");
+            int kernelHandle = processingComputeShader.FindKernel("CropImage");
             RenderTexture result = GetTemporaryRenderTexture(croppedImage);
 
             BindTextures(kernelHandle, image, result);
@@ -286,7 +286,7 @@ namespace CJM.DeepLearningImageProcessor
             RenderTexture.ReleaseTemporary(result);
         }
 
-        
+
         public void CropImageShader(RenderTexture image, RenderTexture croppedImage, float[] offset, float[] size)
         {
             cropMaterial.SetVector("_Offset", new Vector4(offset[0], offset[1], 0, 0));
