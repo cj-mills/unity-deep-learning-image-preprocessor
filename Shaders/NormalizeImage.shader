@@ -3,6 +3,9 @@ Shader "Deep Learning Image Preprocessor/NormalizeImage"
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
+        _Mean("Mean", Vector) = (0, 0, 0, 0)
+        _Std("Std", Vector) = (1, 1, 1, 1)
+        _Scale("Scale", Range(0, 10)) = 1
     }
     SubShader
     {
@@ -17,9 +20,9 @@ Shader "Deep Learning Image Preprocessor/NormalizeImage"
 
             #include "UnityCG.cginc"
 
-            // Uniform arrays to hold the mean and standard deviation values for each color channel (r, g, b)
-            uniform float _Mean[3];
-            uniform float _Std[3];
+            // Uniform variables to hold the mean and standard deviation values for each color channel (r, g, b)
+            float4 _Mean;
+            float4 _Std;
             float _Scale;
 
             struct appdata
@@ -49,10 +52,8 @@ Shader "Deep Learning Image Preprocessor/NormalizeImage"
             {
                 // Sample the input image
                 float4 col = tex2D(_MainTex, i.uv);
-                // Normalize each color channel (r, g, b)
-                col.r = ((col.r - _Mean[0]) / _Std[0])*_Scale;
-                col.g = ((col.g - _Mean[1]) / _Std[1])*_Scale;
-                col.b = ((col.b - _Mean[2]) / _Std[2])*_Scale;
+                // Normalize each color channel (r, g, b) and scale
+                col.rgb = ((col.rgb - _Mean.rgb) / _Std.rgb) * _Scale;
                 // Return the normalized color values
                 return col;
             }
