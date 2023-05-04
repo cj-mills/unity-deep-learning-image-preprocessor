@@ -63,10 +63,10 @@ namespace CJM.DeepLearningImageProcessor
         {
             // Load default assets only in the Unity Editor, not in a build
 #if UNITY_EDITOR
-            processingComputeShader = LoadDefaultAsset<ComputeShader>(ProcessingComputeShaderGUID, processingComputeShader);
-            normalizeShader = LoadDefaultAsset<Shader>(NormalizeShaderGUID, normalizeShader);
-            cropShader = LoadDefaultAsset<Shader>(CropShaderGUID, cropShader);
-            normStatsJson = LoadDefaultAsset<TextAsset>(NormStatsJsonGUID, normStatsJson);
+            processingComputeShader = LoadDefaultAsset<ComputeShader>(ref processingComputeShader, ProcessingComputeShaderGUID);
+            normalizeShader = LoadDefaultAsset<Shader>(ref normalizeShader, NormalizeShaderGUID);
+            cropShader = LoadDefaultAsset<Shader>(ref cropShader, CropShaderGUID);
+            normStatsJson = LoadDefaultAsset<TextAsset>(ref normStatsJson, NormStatsJsonGUID);
 #endif
         }
 
