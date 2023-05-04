@@ -70,7 +70,6 @@ namespace CJM.DeepLearningImageProcessor
 #endif
         }
 
-
         /// <summary>
         /// Loads the default asset for the specified field using its GUID.
         /// </summary>
@@ -89,9 +88,6 @@ namespace CJM.DeepLearningImageProcessor
             return null;
 #endif
         }
-
-
-
 
         /// <summary>
         /// Called when the script is initialized.
