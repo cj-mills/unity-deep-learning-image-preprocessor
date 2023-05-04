@@ -1,7 +1,10 @@
 Shader "Deep Learning Image Preprocessor/CropImage" {
     Properties {
+        // The input texture to crop
         _MainTex ("Texture", 2D) = "white" {}
+        // A vector representing the x and y offsets for the cropping area
         _Offset ("Offset", Vector) = (0, 0, 0, 0)
+        // A vector representing the width and height of the cropping area
         _Size ("Size", Vector) = (0, 0, 0, 0)
     }
     
