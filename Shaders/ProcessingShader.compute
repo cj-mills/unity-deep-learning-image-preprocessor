@@ -21,11 +21,17 @@ float _Scale;
 void NormalizeImage(uint3 id : SV_DispatchThreadID)
 {
     float4 inputPixel = _InputImage[id.xy];
-    float4 normalizedPixel = (inputPixel - _Mean) / _Std;
+    
+    // Create float4 variables for mean and standard deviation
+    float4 mean = float4(_Mean[0], _Mean[1], _Mean[2], 0.0);
+    float4 std = float4(_Std[0], _Std[1], _Std[2], 1.0);
+
+    float4 normalizedPixel = (inputPixel - mean) / std;
 
     // Apply scaling and leave the alpha channel unchanged
     _OutputImage[id.xy] = float4(normalizedPixel.rgb * _Scale, inputPixel.a);
 }
+
 
 int2 _CropOffset;
 int2 _CropSize;
