@@ -159,8 +159,8 @@ namespace CJM.DeepLearningImageProcessor
         /// </summary>
         private void InitializeProcessingShaders()
         {
-            normalizeMaterial.SetFloatArray("_Mean", mean);
-            normalizeMaterial.SetFloatArray("_Std", std);
+            normalizeMaterial.SetVector("_Mean", new Vector4(mean[0], mean[1], mean[2], 0));
+            normalizeMaterial.SetVector("_Std", new Vector4(std[0], std[1], std[2], 0));
             normalizeMaterial.SetFloat("_Scale", scale);
 
             if (SystemInfo.supportsComputeShaders)
@@ -175,6 +175,7 @@ namespace CJM.DeepLearningImageProcessor
                 processingComputeShader.SetFloat("_Scale", scale);
             }
         }
+
 
         /// <summary>
         /// Creates a compute buffer and sets the provided data.
