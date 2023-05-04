@@ -24,8 +24,7 @@ namespace CJM.DeepLearningImageProcessor
         [Tooltip("JSON file with the mean and std values for normalization")]
         [SerializeField] private TextAsset normStatsJson = null;
 
-        // If you want to set default assets from your project, use the GUID of the asset
-        // You can find the GUID in the .meta file of the asset (open it with a text editor)
+        // GUIDs of the default assets used for shaders and normalization
         private const string ProcessingComputeShaderGUID = "2c418cec15ae44419d94328d0e8dcea8";
         private const string NormalizeShaderGUID = "45d8405a4cc64ecfa477b712e0465c05";
         private const string CropShaderGUID = "0685d34a035b4cefa942d94390282c12";
